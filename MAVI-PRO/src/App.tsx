@@ -1,7 +1,7 @@
-
 import { useState } from "react";
 import { GLOBAL_STYLES, COLORS } from "./constants/theme";
-import { PLANS } from "./constants/plans";
+// Importando PLANS e o tipo PlanKey
+import { PLANS, type PlanKey } from "./constants/Plan";
 import { MOCK_SERVICES, MOCK_PROFESSIONALS } from "./constants/mockData";
 
 // Layout Componentes
@@ -28,14 +28,25 @@ import { Configuracoes } from "./features/configuracoes/Configuracoes";
 import { Suporte } from "./features/suporte/Suporte";
 import { ClientView } from "./features/client-booking/ClientView";
 
-export default function App() {
-  const [mode, setMode] = useState("login"); // "login" | "barber" | "client"
-  const [screen, setScreen] = useState("agenda");
-  const [plan, setPlan] = useState("free");
+// Tipagem dos estados
+type Mode = "login" | "barber" | "client";
+type Screen = 
+  | "agenda" | "financeiro" | "ia" | "fidelizacao" | "menu" 
+  | "clientes" | "profissional" | "servicos" | "produtos" 
+  | "pacotes" | "vendas" | "relatorios" | "estabelecimento" 
+  | "configuracoes" | "suporte";
 
+export default function App() {
+  const [mode, setMode] = useState<Mode>("login");
+  const [screen, setScreen] = useState<Screen>("agenda");
+  const [plan, setPlan] = useState<PlanKey>("free");
+
+  // Obtém os dados do plano atual
   const currentPlanData = PLANS[plan];
 
-  const getLockReason = (screenId) => {
+  // Tipando o parâmetro da função
+  const getLockReason = (screenId: string): string | null => {
+    if (!currentPlanData) return null;
     if (screenId === "financeiro" && !currentPlanData.allowed.includes("financeiro")) return "Plano MV";
     if (screenId === "ia" && !currentPlanData.allowed.includes("ia")) return "Plano Diamante";
     if (screenId === "fidelizacao" && !currentPlanData.allowed.includes("fidelizacao")) return "Plano Diamante";
